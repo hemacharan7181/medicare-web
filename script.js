@@ -1,9 +1,7 @@
 
 const LOCAL_API_BASE_URL = "http://localhost:3000";
-const PRODUCTION_API_BASE_URL = "https://medicare-ai-api-hemacharan7181.onrender.com";
-const API_BASE_URL = (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === "file:")
-  ? LOCAL_API_BASE_URL
-  : PRODUCTION_API_BASE_URL;
+const isLocalPreview = location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === "file:";
+const API_BASE_URL = LOCAL_API_BASE_URL;
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -242,6 +240,10 @@ function getInstantChatReply(message) {
   return null;
 }
 
+function getStudentDemoReply() {
+  return "I can help you choose a MediCare doctor and book a demo appointment. For symptoms not listed, please choose Dr. Arjun Mehta, our General Physician, and use Book Appointment to select a time slot.";
+}
+
 function addAiChatBubble(text, role) {
   const bubble = document.createElement("div");
   bubble.className = `ai-chat-bubble ai-chat-${role === "user" ? "user" : "bot"}`;
@@ -277,6 +279,16 @@ aiChatForm.addEventListener("submit", async (event) => {
   if (instantReply) {
     addAiChatBubble(instantReply, "bot");
     aiChatHistory.push({ role: "assistant", text: instantReply });
+    aiChatInput.focus();
+    return;
+  }
+
+  // GitHub Pages is a static site. Keep the student demo fully functional and
+  // private by answering in the browser instead of exposing an API key online.
+  if (!isLocalPreview) {
+    const demoReply = getStudentDemoReply();
+    addAiChatBubble(demoReply, "bot");
+    aiChatHistory.push({ role: "assistant", text: demoReply });
     aiChatInput.focus();
     return;
   }
