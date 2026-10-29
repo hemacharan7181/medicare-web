@@ -279,9 +279,9 @@ aiChatForm.addEventListener("submit", async (event) => {
 
   const thinkingBubble = addAiChatBubble("Thinking...", "bot");
   const controller = new AbortController();
-  // The server answers common questions immediately and caps model fallbacks at
-  // eight seconds, so the interface should never leave people waiting.
-  const timeoutId = setTimeout(() => controller.abort(), 12000);
+  // The server answers common questions immediately and returns a safe fallback
+  // after a short model attempt, so the interface never leaves people waiting.
+  const timeoutId = setTimeout(() => controller.abort(), 5000);
 
   aiChatSend.disabled = true;
   aiChatInput.disabled = true;

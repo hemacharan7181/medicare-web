@@ -18,7 +18,7 @@ A responsive hospital appointment website with a liquid-glass visual theme, samp
    ```env
    GEMINI_API_KEY=put_your_private_key_here
    # Optional: use a Gemini model enabled for your key.
-   # GEMINI_MODEL=gemini-flash-latest
+   # GEMINI_MODEL=gemini-3.8-flash
    ```
 
 4. Start the API from `backend` with `npm start`. The health endpoint is `http://localhost:3000/health`.

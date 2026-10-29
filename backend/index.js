@@ -10,7 +10,7 @@ const apiKey = process.env.GEMINI_API_KEY;
 // Keep this configurable because Gemini model availability can vary by project.
 // The previous default (gemma-4-31b-it) is not a Gemini API model, which caused
 // every chat request to fail before a response could be generated.
-const modelName = process.env.GEMINI_MODEL || "gemini-flash-latest";
+const modelName = process.env.GEMINI_MODEL || "gemini-3.8-flash";
 
 const systemInstruction = `You are Ask AI, the MediCare hospital appointment assistant.
 Reply in 2-3 short plain-text sentences.
@@ -92,7 +92,7 @@ function withTimeout(promise, timeoutMs) {
 async function generateWithRetry(chat, message) {
   for (let attempt = 1; attempt <= 3; attempt += 1) {
     try {
-      return await withTimeout(chat.sendMessage(message), 8000);
+      return await withTimeout(chat.sendMessage(message), 2500);
     } catch (error) {
       const status = error?.status || error?.response?.status;
       if (status !== 503 || attempt === 3) throw error;
