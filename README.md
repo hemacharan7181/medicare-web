@@ -28,15 +28,13 @@ A responsive hospital appointment website with a liquid-glass visual theme, samp
 
 ### Backend on Render
 
-- Create a Web Service from this repository.
-- Root Directory: `backend`
-- Build Command: `npm install`
-- Start Command: `npm start`
-- Add `GEMINI_API_KEY` in Render's Environment settings. `GEMINI_MODEL` is optional; set it only if you need a specific Gemini model enabled for your key. Never place API keys in frontend files or GitHub.
+- In Render, create a **Blueprint** from this GitHub repository. The included `render.yaml` configures the backend service as `medicare-ai-api-hemacharan7181`.
+- When Render asks for it, add the new `GEMINI_API_KEY` in the Environment settings. Never place API keys in frontend files or GitHub.
+- Deploy the service and confirm its health endpoint: `https://medicare-ai-api-hemacharan7181.onrender.com/health`.
 
 ### Frontend on GitHub Pages
 
-Enable GitHub Pages for the repository's `main` branch and `/ (root)`. Once the Render service is live, edit `script.js` and replace `https://REPLACE-WITH-RENDER-URL.onrender.com` in `API_BASE_URL` with the actual Render service URL. Commit the change and test the deployed chatbot.
+Enable GitHub Pages for the repository's `main` branch and `/ (root)`. The frontend is already configured to call the Render service created by `render.yaml`. Common hospital and booking questions also have an instant browser fallback while the service wakes up.
 
 ## Safety and limitations
 

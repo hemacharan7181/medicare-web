@@ -1,5 +1,9 @@
 
-const API_BASE_URL = (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === "file:") ? "http://localhost:3000" : "https://REPLACE-WITH-RENDER-URL.onrender.com";
+const LOCAL_API_BASE_URL = "http://localhost:3000";
+const PRODUCTION_API_BASE_URL = "https://medicare-ai-api-hemacharan7181.onrender.com";
+const API_BASE_URL = (location.hostname === "localhost" || location.hostname === "127.0.0.1" || location.protocol === "file:")
+  ? LOCAL_API_BASE_URL
+  : PRODUCTION_API_BASE_URL;
 
 const $ = (selector) => document.querySelector(selector);
 
@@ -211,10 +215,6 @@ const aiChatHistory = [];
 function getInstantChatReply(message) {
   const text = message.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
 
-  if (/^(hi|hello|hey|good morning|good afternoon|good evening)\b/.test(text)) {
-    return "Hello! I can help you choose a MediCare doctor or book a demo appointment. What would you like help with?";
-  }
-
   if (/emergency|ambulance|cant breathe|cannot breathe|severe bleeding|unconscious/.test(text)) {
     return "This may be an emergency. Please call your local emergency services now or go to the nearest emergency department.";
   }
@@ -233,6 +233,10 @@ function getInstantChatReply(message) {
 
   if (/book|appointment|slot|time|available|doctor|specialt|help|what can you/.test(text)) {
     return "You can book a demo appointment with Dr. Arjun Mehta, Dr. Priya Sharma, or Dr. Rahul Patel. Click Book Appointment to choose a doctor, date, and available time slot.";
+  }
+
+  if (/^(hi|hello|hey|good morning|good afternoon|good evening)$/.test(text)) {
+    return "Hello! I can help you choose a MediCare doctor or book a demo appointment. What would you like help with?";
   }
 
   return null;
@@ -308,9 +312,9 @@ aiChatForm.addEventListener("submit", async (event) => {
     thinkingBubble.textContent = reply;
     aiChatHistory.push({ role: "assistant", text: reply });
   } catch (error) {
-    thinkingBubble.textContent = error.name === "AbortError"
-      ? "The assistant took too long to respond. Please try again."
-      : error.message || "The assistant could not respond. Please try again.";
+    const fallbackReply = "I can help with MediCare doctors and demo appointment booking. Please click Book Appointment to choose a doctor and time slot.";
+    thinkingBubble.textContent = fallbackReply;
+    aiChatHistory.push({ role: "assistant", text: fallbackReply });
   } finally {
     clearTimeout(timeoutId);
     aiChatSend.disabled = false;
