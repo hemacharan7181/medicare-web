@@ -13,11 +13,12 @@ A responsive hospital appointment website with a liquid-glass visual theme, samp
 
 1. Install Node.js 18 or later.
 2. In Terminal, open the `backend` folder and run `npm install`.
-3. Create `backend/.env` (this file must never be uploaded to GitHub) with:
+3. Copy `backend/.env.example` to `backend/.env`, then add your Gemini API key (this file must never be uploaded to GitHub):
 
    ```env
    GEMINI_API_KEY=put_your_private_key_here
-   GEMINI_MODEL=gemma-4-31b-it
+   # Optional: use a Gemini model enabled for your key.
+   # GEMINI_MODEL=gemini-flash-latest
    ```
 
 4. Start the API from `backend` with `npm start`. The health endpoint is `http://localhost:3000/health`.
@@ -31,7 +32,7 @@ A responsive hospital appointment website with a liquid-glass visual theme, samp
 - Root Directory: `backend`
 - Build Command: `npm install`
 - Start Command: `npm start`
-- Add environment variables in Render settings: `GEMINI_API_KEY` and `GEMINI_MODEL` (`gemma-4-31b-it`). Never place API keys in frontend files or GitHub.
+- Add `GEMINI_API_KEY` in Render's Environment settings. `GEMINI_MODEL` is optional; set it only if you need a specific Gemini model enabled for your key. Never place API keys in frontend files or GitHub.
 
 ### Frontend on GitHub Pages
 

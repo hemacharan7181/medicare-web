@@ -238,7 +238,9 @@ aiChatForm.addEventListener("submit", async (event) => {
   aiChatHistory.push({ role: "user", text: chatMessage });
   const thinkingBubble = addAiChatBubble("Thinking...", "bot");
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 25000);
+  // The server answers common questions immediately and caps model fallbacks at
+  // eight seconds, so the interface should never leave people waiting.
+  const timeoutId = setTimeout(() => controller.abort(), 12000);
 
   aiChatSend.disabled = true;
   aiChatInput.disabled = true;
@@ -264,9 +266,10 @@ aiChatForm.addEventListener("submit", async (event) => {
       : "The assistant is busy, please try again in a moment.";
     thinkingBubble.textContent = reply;
     aiChatHistory.push({ role: "assistant", text: reply });
-  } catch {
-    thinkingBubble.textContent =
-      "The assistant is busy, please try again in a moment.";
+  } catch (error) {
+    thinkingBubble.textContent = error.name === "AbortError"
+      ? "The assistant took too long to respond. Please try again."
+      : error.message || "The assistant could not respond. Please try again.";
   } finally {
     clearTimeout(timeoutId);
     aiChatSend.disabled = false;
