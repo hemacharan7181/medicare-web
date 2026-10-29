@@ -208,6 +208,36 @@ const aiChatInput = $("#aiChatInput");
 const aiChatSend = aiChatForm.querySelector("button[type='submit']");
 const aiChatHistory = [];
 
+function getInstantChatReply(message) {
+  const text = message.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
+
+  if (/^(hi|hello|hey|good morning|good afternoon|good evening)\b/.test(text)) {
+    return "Hello! I can help you choose a MediCare doctor or book a demo appointment. What would you like help with?";
+  }
+
+  if (/emergency|ambulance|cant breathe|cannot breathe|severe bleeding|unconscious/.test(text)) {
+    return "This may be an emergency. Please call your local emergency services now or go to the nearest emergency department.";
+  }
+
+  if (/constipat|stomach|abdominal|fever|cold|cough|flu|headache|general physician/.test(text)) {
+    return "Dr. Arjun Mehta, our General Physician, is the best match for this concern. Please click Book Appointment to see the available demo time slots.";
+  }
+
+  if (/chest|heart|cardio|blood pressure|bp\b|palpitation/.test(text)) {
+    return "Dr. Priya Sharma in Cardiology is the best match for heart or blood-pressure concerns. Please click Book Appointment to see the available demo time slots.";
+  }
+
+  if (/skin|rash|acne|hair|dermat|itch/.test(text)) {
+    return "Dr. Rahul Patel in Dermatology is the best match for skin, hair, or rash concerns. Please click Book Appointment to see the available demo time slots.";
+  }
+
+  if (/book|appointment|slot|time|available|doctor|specialt|help|what can you/.test(text)) {
+    return "You can book a demo appointment with Dr. Arjun Mehta, Dr. Priya Sharma, or Dr. Rahul Patel. Click Book Appointment to choose a doctor, date, and available time slot.";
+  }
+
+  return null;
+}
+
 function addAiChatBubble(text, role) {
   const bubble = document.createElement("div");
   bubble.className = `ai-chat-bubble ai-chat-${role === "user" ? "user" : "bot"}`;
@@ -236,6 +266,17 @@ aiChatForm.addEventListener("submit", async (event) => {
   addAiChatBubble(chatMessage, "user");
   const history = aiChatHistory.slice(-6);
   aiChatHistory.push({ role: "user", text: chatMessage });
+  const instantReply = getInstantChatReply(chatMessage);
+
+  // These supported questions do not need a network round trip. This keeps the
+  // assistant useful when a free hosting service is waking up or unavailable.
+  if (instantReply) {
+    addAiChatBubble(instantReply, "bot");
+    aiChatHistory.push({ role: "assistant", text: instantReply });
+    aiChatInput.focus();
+    return;
+  }
+
   const thinkingBubble = addAiChatBubble("Thinking...", "bot");
   const controller = new AbortController();
   // The server answers common questions immediately and caps model fallbacks at
