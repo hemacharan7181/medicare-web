@@ -209,6 +209,39 @@ const aiChatForm = $("#aiChatForm");
 const aiChatInput = $("#aiChatInput");
 const aiChatSend = aiChatForm.querySelector("button[type='submit']");
 const aiChatHistory = [];
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+const supportsHoverPointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+
+function setupHeroParallax() {
+  const heroVisual = $(".hero-visual");
+  if (!heroVisual) return;
+
+  const resetHeroTilt = () => {
+    heroVisual.style.setProperty("--hero-pointer-x", "0deg");
+    heroVisual.style.setProperty("--hero-pointer-y", "0deg");
+    heroVisual.style.setProperty("--hero-shift-x", "0px");
+    heroVisual.style.setProperty("--hero-shift-y", "0px");
+  };
+
+  resetHeroTilt();
+
+  if (prefersReducedMotion.matches || !supportsHoverPointer.matches) return;
+
+  heroVisual.addEventListener("pointermove", (event) => {
+    const rect = heroVisual.getBoundingClientRect();
+    const ratioX = (event.clientX - rect.left) / rect.width;
+    const ratioY = (event.clientY - rect.top) / rect.height;
+    const offsetX = (ratioX - 0.5) * 2;
+    const offsetY = (ratioY - 0.5) * 2;
+
+    heroVisual.style.setProperty("--hero-pointer-x", `${(-offsetY * 3.8).toFixed(2)}deg`);
+    heroVisual.style.setProperty("--hero-pointer-y", `${(offsetX * 4.6).toFixed(2)}deg`);
+    heroVisual.style.setProperty("--hero-shift-x", `${(offsetX * 8).toFixed(2)}px`);
+    heroVisual.style.setProperty("--hero-shift-y", `${(offsetY * 5).toFixed(2)}px`);
+  });
+
+  heroVisual.addEventListener("pointerleave", resetHeroTilt);
+}
 
 function getInstantChatReply(message) {
   const text = message.toLowerCase().replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
@@ -397,3 +430,4 @@ form.addEventListener("submit", (event) => {
 $("#year").textContent = new Date().getFullYear();
 
 renderAppointments();
+setupHeroParallax();
